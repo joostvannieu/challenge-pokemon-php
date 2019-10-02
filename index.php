@@ -75,7 +75,7 @@
         }
         else {
             for ($i = 0; $i < 4; $i++){
-                $randomIndex = random_int(0, count($moves));
+                $randomIndex = random_int(0, count($moves)-1);
                 $tempMoves[] = $moves[$randomIndex]["move"]["name"];
                 unset($moves[$randomIndex]);
             }
