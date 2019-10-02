@@ -1,5 +1,14 @@
 <?php
-    $searchRequest = "789";
+    $pokemon = getPokemon(getSearchRequest());
+
+    function getSearchRequest() : string {
+        //$searchRequest = "789";
+        if (isset($_GET["search_btn"])) { //check if form was submitted
+            $searchRequest = $_GET["search_txt"]; //get input text
+        } else
+            $searchRequest = "1";
+        return strtolower($searchRequest);
+    }
 
     //var_dump($pokemon["moves"][0]["move"]);
     //echo $pokemon["moves"][0]["move"]["name"];
@@ -8,9 +17,10 @@
         $apiUrl = "https://pokeapi.co/api/v2/pokemon/$searchRequest";
         $json = file_get_contents($apiUrl);
         $pokemonInfo = json_decode($json, true);
-        $pokemon = ["id", "name", "moves", "species", "sprite"];
+        $pokemon = ["id", "name", "weight", "moves", "species", "sprite"];
         $pokemon["id"] = $pokemonInfo["id"];
         $pokemon["name"] = $pokemonInfo["name"];
+        $pokemon["weight"] = $pokemonInfo["weight"];
         $pokemon["moves"] = getMoves($pokemonInfo["moves"]);
         $pokemon["sprite"] = $pokemonInfo["sprites"]["front_default"];
         $pokemon["species"] = getEvolutions($pokemonInfo["species"]["url"]);
@@ -76,9 +86,9 @@
 <nav class="navbar navbar-dark bg-dark navbar-expand-lg justify-content-center mb-4   ">
     <a class="navbar-brand text-danger">JoMa Pokédex </a>
     <img class="mr-2"  src="https://upload.wikimedia.org/wikipedia/en/3/39/Pokeball.PNG" width="30" height="30" alt="pikachu picture">
-    <form class="form-inline">
-        <input id="input" class="form-control mr-sm-1 input-lg" type="search" placeholder="Pokemon name or ID" aria-label="Search">
-        <button id="button" class="btn btn-outline-success my-2 my-sm-0 btn-md" type="button">Search</button>
+    <form class="form-inline" action="" method="get">
+        <input id="input" class="form-control mr-sm-1 input-lg" type="text" name="search_txt" placeholder="Pokemon name or ID" aria-label="Search">
+        <button id="button" class="btn btn-outline-success my-2 my-sm-0 btn-md" type="submit" name="search_btn">Search</button>
     </form>
 </nav>
 
@@ -89,7 +99,7 @@
         <div class=" col-md-6  ">
 
             <div class="card border border-primary rounded shadow-lg p-3 mb-0 bg-light ">
-                <img  id="pokemonpic" class="card-img icons" src="https://upload.wikimedia.org/wikipedia/en/3/39/Pokeball.PNG" alt="pokemon picture">
+                <img  id="pokemonpic" class="card-img icons" alt="pokemon picture" src="<?php echo $pokemon["sprite"] ?>" >
             </div>
         </div>
 
@@ -99,10 +109,18 @@
                 <div class="card-body text-center">
                     <h5 class="card-title">Pokemon Information</h5>
 
-                    <p class="card-text text-left font-weight-bold ">Name: <span id="firstname" class=" text-dark pokeinfo font-weight-normal text-capitalize "></span></p>
-                    <p class="card-text text-left font-weight-bold">Id: <span id="firstid" class="text-dark pokeinfo font-weight-normal"></span></p>
-                    <p class="card-text text-left font-weight-bold">Weight: <span id="firstweight" class=" text-dark pokeinfo font-weight-normal"></span></p>
-                    <p class="card-text text-left font-weight-bold ">Moves: <br><span id="firstmoves" class=" text-dark pokeinfo font-weight-normal"></span></p>
+                    <p class="card-text text-left font-weight-bold ">Name: <span id="firstname" class=" text-dark pokeinfo font-weight-normal text-capitalize ">
+                            <?php echo $pokemon["name"] ?>
+                        </span></p>
+                    <p class="card-text text-left font-weight-bold">Id: <span id="firstid" class="text-dark pokeinfo font-weight-normal">
+                            <?php echo $pokemon["id"] ?>
+                        </span></p>
+                    <p class="card-text text-left font-weight-bold">Weight: <span id="firstweight" class=" text-dark pokeinfo font-weight-normal">
+                            <?php echo $pokemon["weight"] . " kg" ?>
+                        </span></p>
+                    <p class="card-text text-left font-weight-bold ">Moves: <br><span id="firstmoves" class=" text-dark pokeinfo font-weight-normal">
+                            <?php echo implode(", ", $pokemon["moves"]) ?>
+                        </span></p>
 
                 </div>
             </div>
