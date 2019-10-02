@@ -1,0 +1,41 @@
+
+body {
+    background-image: url("../background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: 'Exo 2', sans-serif;
+    color:#008080 ;
+}
+
+.container .mt-5 {
+
+    margin-top: 9rem !important;
+
+}
+
+.card {
+
+    height: 20rem !important;
+}
+
+.arrow {
+    margin-left: 15rem !important;
+}
+
+.evolutioncon{
+    height: 30rem !important;
+}
+
+
+
+/* arrows*/
+.page-link {
+    width: 10rem !important;
+}
+.pagination {
+    margin-left: -3rem !important;
+}
+
+.pointer {
+    cursor: pointer;
+}

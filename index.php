@@ -1,5 +1,5 @@
 <?php
-    $searchRequest = "7";
+    $searchRequest = "789";
 
     //var_dump($pokemon["moves"][0]["move"]);
     //echo $pokemon["moves"][0]["move"]["name"];
@@ -11,6 +11,7 @@
         $pokemon = ["id", "name", "moves", "species", "sprite"];
         $pokemon["id"] = $pokemonInfo["id"];
         $pokemon["name"] = $pokemonInfo["name"];
+        $pokemon["moves"] = getMoves($pokemonInfo["moves"]);
         $pokemon["sprite"] = $pokemonInfo["sprites"]["front_default"];
         $pokemon["species"] = getEvolutions($pokemonInfo["species"]["url"]);
         return $pokemon;
@@ -37,16 +38,86 @@
         return  $chain; //return evolution chain, first element will always be the originator of the chain
     }
 
-    var_dump(getPokemon($searchRequest));
+    function getMoves(array $moves) : array {
+        $tempMoves = [];
+        if (count($moves) <= 4 ){
+            foreach ($moves as $move) {
+                $tempMoves[] = $move["move"]["name"];
+            }
+            return $tempMoves;
+        }
+        else {
+            for ($i = 0; $i < 4; $i++){
+                $randomIndex = random_int(0, count($moves));
+                $tempMoves[] = $moves[$randomIndex]["move"]["name"];
+                unset($moves[$randomIndex]);
+            }
+            return $tempMoves;
+        }
+    }
+    //var_dump(getPokemon($searchRequest));
 
     ?>
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Pokédex</title>
+    <link href="https://fonts.googleapis.com/css?family=Exo+2&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="./assets/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="./assets/css/style.css" type="text/css">
+</head>
 <body>
-<p>
-    <?php
-        echo getEvolutions("https://pokeapi.co/api/v2/pokemon-species/2/");
-    ?>
-</p>
+<!-- search button -->
+
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg justify-content-center mb-4   ">
+    <a class="navbar-brand text-danger">JoMa Pokédex </a>
+    <img class="mr-2"  src="https://upload.wikimedia.org/wikipedia/en/3/39/Pokeball.PNG" width="30" height="30" alt="pikachu picture">
+    <form class="form-inline">
+        <input id="input" class="form-control mr-sm-1 input-lg" type="search" placeholder="Pokemon name or ID" aria-label="Search">
+        <button id="button" class="btn btn-outline-success my-2 my-sm-0 btn-md" type="button">Search</button>
+    </form>
+</nav>
+
+<!--  first part for image box-->
+<div class="container rounded mt-5  ">
+    <div class="row justify-content-center mt-5  ">
+        <!-- 1 card -->
+        <div class=" col-md-6  ">
+
+            <div class="card border border-primary rounded shadow-lg p-3 mb-0 bg-light ">
+                <img  id="pokemonpic" class="card-img icons" src="https://upload.wikimedia.org/wikipedia/en/3/39/Pokeball.PNG" alt="pokemon picture">
+            </div>
+        </div>
+
+        <!-- second box for info of pokemon -->
+        <div class=" col-md-6 ">
+            <div class="card border border-primary rounded">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Pokemon Information</h5>
+
+                    <p class="card-text text-left font-weight-bold ">Name: <span id="firstname" class=" text-dark pokeinfo font-weight-normal text-capitalize "></span></p>
+                    <p class="card-text text-left font-weight-bold">Id: <span id="firstid" class="text-dark pokeinfo font-weight-normal"></span></p>
+                    <p class="card-text text-left font-weight-bold">Weight: <span id="firstweight" class=" text-dark pokeinfo font-weight-normal"></span></p>
+                    <p class="card-text text-left font-weight-bold ">Moves: <br><span id="firstmoves" class=" text-dark pokeinfo font-weight-normal"></span></p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- arrow buttons-->
+<nav  class= " mt-2  arrow" >
+    <ul class="pagination  ">
+        <li class="page-item"><a id="previous" class="page-link text-center" href="#">Previous</a></li>
+        <li class="page-item"><a id="next" class="page-link text-center" href="#">Next</a></li>
+    </ul>
+</nav>
+<div id="evolution"></div>
+
 </body>
 </html>
