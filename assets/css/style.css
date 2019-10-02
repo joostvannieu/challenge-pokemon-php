@@ -13,9 +13,9 @@ body {
 
 }
 
-.card {
-
-    height: 20rem !important;
+#pokemonpic{
+    height: 50%;
+    width: 50%;
 }
 
 .arrow {

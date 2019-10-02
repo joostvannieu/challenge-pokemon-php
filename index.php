@@ -1,4 +1,5 @@
 <?php
+    declare(strict_types=1);
     $pokemon = getPokemon(getSearchRequest());
 
     function getSearchRequest() : string {
@@ -18,6 +19,9 @@
 
     function getPokemon(string $searchRequest) : array {
         $apiUrl = "https://pokeapi.co/api/v2/pokemon/$searchRequest";
+        if (file_get_contents($apiUrl) == null){
+            $apiUrl = "https://pokeapi.co/api/v2/pokemon/1";
+        }
         $json = file_get_contents($apiUrl);
         $pokemonInfo = json_decode($json, true);
         $pokemon = ["id", "name", "weight", "moves", "species", "sprite"];
@@ -30,6 +34,16 @@
         return $pokemon;
     }
 
+    function getEvoPoke(string $name) : array {
+        $apiUrl = "https://pokeapi.co/api/v2/pokemon/$name";
+        $json = file_get_contents($apiUrl);
+        $evoPokeInfo = json_decode($json, true);
+        $evoPoke = ["name", "sprite"];
+        $evoPoke["name"] = $evoPokeInfo["name"];
+        $evoPoke["sprite"] = $evoPokeInfo["sprites"]["front_default"];
+        return $evoPoke;
+    }
+
     function getEvolutions(string $url) : array {
         $json = file_get_contents($url);
         $info = json_decode($json, true);
@@ -37,13 +51,13 @@
         $json = file_get_contents($info["evolution_chain"]["url"]);
         $info = json_decode($json, true);
         $chain = [];
-        $chain[] = $info["chain"]["species"]["url"];
+        $chain[] = getEvoPoke($info["chain"]["species"]["name"]);
 
         foreach ($info["chain"]["evolves_to"] as $secondEvoSpecies){
             //var_dump($species["species"]["name"]);
-            $chain[] = $secondEvoSpecies["species"]["url"];
+            $chain[] = getEvoPoke($secondEvoSpecies["species"]["name"]);
             foreach ($secondEvoSpecies["evolves_to"] as $finalEvoSpecies){
-                $chain[] = $finalEvoSpecies["species"]["url"];
+                $chain[] = getEvoPoke($finalEvoSpecies["species"]["name"]);
             }
         }
         //return $info["chain"];
@@ -70,6 +84,13 @@
     }
     //var_dump(getPokemon($searchRequest));
 
+    function showEvolutions(array $pokemon) : void {
+        foreach ($pokemon["species"] as $species){
+            $name = $species["name"];
+            $url = $species["sprite"];
+            echo "<img src=$url alt=$name>";
+        }
+    }
     ?>
 
 <!DOCTYPE html>
@@ -102,7 +123,7 @@
         <div class=" col-md-6  ">
 
             <div class="card border border-primary rounded shadow-lg p-3 mb-0 bg-light ">
-                <img  id="pokemonpic" class="card-img icons" alt="pokemon picture" src="<?php echo $pokemon["sprite"] ?>" >
+                <img  id="pokemonpic" class="" alt="pokemon picture" src="<?php echo $pokemon["sprite"] ?>" >
             </div>
         </div>
 
@@ -124,6 +145,9 @@
                     <p class="card-text text-left font-weight-bold ">Moves: <br><span id="firstmoves" class=" text-dark pokeinfo font-weight-normal">
                             <?php echo implode(", ", $pokemon["moves"]) ?>
                         </span></p>
+                    <p class="card-text text-left font-weight-bold ">Evolutions: <br>
+                        <?php showEvolutions($pokemon) ?>
+                    </p>
 
                 </div>
             </div>
@@ -134,8 +158,8 @@
 <!-- arrow buttons-->
 <nav  class= " mt-2  arrow" >
     <ul class="pagination  ">
-        <li class="page-item"><a id="previous" class="page-link text-center" href="#">Previous</a></li>
-        <li class="page-item"><a id="next" class="page-link text-center" href="#">Next</a></li>
+        <li class="page-item"><a id="previous" class="page-link text-center" href="http://pokemon.php/index.php?search_txt=<?php echo $pokemon["id"]-1 ?>&search_btn=">Previous</a></li>
+        <li class="page-item"><a id="next" class="page-link text-center" href="http://pokemon.php/index.php?search_txt=<?php echo $pokemon["id"]+1 ?>&search_btn=">Next</a></li>
     </ul>
 </nav>
 <div id="evolution"></div>
