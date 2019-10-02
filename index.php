@@ -4,7 +4,10 @@
     function getSearchRequest() : string {
         //$searchRequest = "789";
         if (isset($_GET["search_btn"])) { //check if form was submitted
-            $searchRequest = $_GET["search_txt"]; //get input text
+            if ($_GET["search_txt"] == null)
+                $searchRequest = "1";
+            else
+                $searchRequest = $_GET["search_txt"]; //get input text
         } else
             $searchRequest = "1";
         return strtolower($searchRequest);
@@ -34,13 +37,13 @@
         $json = file_get_contents($info["evolution_chain"]["url"]);
         $info = json_decode($json, true);
         $chain = [];
-        $chain[] = $info["chain"]["species"]["name"];
+        $chain[] = $info["chain"]["species"]["url"];
 
         foreach ($info["chain"]["evolves_to"] as $secondEvoSpecies){
             //var_dump($species["species"]["name"]);
-            $chain[] = $secondEvoSpecies["species"]["name"];
+            $chain[] = $secondEvoSpecies["species"]["url"];
             foreach ($secondEvoSpecies["evolves_to"] as $finalEvoSpecies){
-                $chain[] = $finalEvoSpecies["species"]["name"];
+                $chain[] = $finalEvoSpecies["species"]["url"];
             }
         }
         //return $info["chain"];
