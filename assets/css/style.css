@@ -7,6 +7,16 @@ body {
     color:#008080 ;
 }
 
+a img{
+    text-decoration: none;
+    outline: none;
+    border: none;
+}
+
+table{
+    border: 1px solid black;
+}
+
 .container .mt-5 {
 
     margin-top: 9rem !important;
@@ -16,6 +26,9 @@ body {
 #pokemonpic{
     height: 50%;
     width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .arrow {
